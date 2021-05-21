@@ -1,0 +1,1 @@
+APPENDUM = ["'ve", "'s", 'new', "'m", 'from', 'today', 'subject', 're', 'edu', 'use', 'us', 've', 'let', ',','.', '-', ';', ':', "n't", "together", "'re", "great", "nice", "pretty", "much", "many", "thing", "things", "something", "somethings", "enough", '%']

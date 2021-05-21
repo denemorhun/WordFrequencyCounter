@@ -1,3 +1,7 @@
+# author: Denem Orhun
+# Script to parse documents and count occurrences of most common critical words
+# This script considers Nouns and adjectives that occur most commonly to be important
+
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize, PunktSentenceTokenizer
 from collections import Counter
@@ -5,6 +9,7 @@ from collections import Counter
 import os, glob
 import nltk 
 import pprint
+from constants import APPENDUM
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
@@ -28,7 +33,7 @@ def filter_text(script):
 
     # declare set of stopwords
     stop_words = set(stopwords.words('english'))
-    stop_words.update(["'ve", "'s", 'new', "'m", 'from', 'today', 'subject', 're', 'edu', 'use', 'us', 've', 'let', ',','.', '-', ';', ':', "n't", "together", "'re", "great", "nice", "pretty", "much", "many", "thing", "things", "something", "somethings", "enough", '%'])
+    stop_words.update(APPENDUM)
 
     # tokenize script into an array
     word_tokens = word_tokenize(script)
@@ -55,37 +60,39 @@ def filter_text(script):
 
     return tokenized_script
 
+
 # driver code
-def main():
+def read_files():
     # open the input folder with txt files
     os.chdir('../input')
     path_to_file = os.getcwd() + '/'
-    words = {}
+    
+
+    words = {} 
 
     # go through all files within the folder
-    for filename in glob.glob(os.path.join(path_to_file, '*.txt')): #O(a)
+    for filename in glob.glob(os.path.join(path_to_file, '*.txt')): 
         with open(filename, 'r') as f:
             script = read_file(filename)
             tagged_script = filter_text(script)
-            
-            #documents[os.path.basename(filename)] = filter_text(script)
 
-            for tuples in tagged_script: #O(b)   -> O (a*b)
-                interesting_word = tuples[0][0]
-                # isolate just the word and append doc and count
-                if interesting_word in words.keys():
-                    # total sum nasil hesaplanacak yeni dictionary kullanmadan?
-                    # update count and append file name, os.path.basename returns filename
-                    words[interesting_word]['count'] += tuples[1]
-                    words[interesting_word]['file'].append(os.path.basename(filename))
-                else:
-                    # initialize if not in dict
-                    words[interesting_word]  = {'count': tuples[1], 'file': [os.path.basename(filename)]}
+        for tuples in tagged_script: 
+            interesting_word = tuples[0][0]
+            # isolate just the word and append doc and count
+            if interesting_word in words.keys():
+            # update count and append file name
+                words[interesting_word]['count'] += tuples[1]
+                words[interesting_word]['file'].append(os.path.basename(filename))
+            # initialize if not in dict
+            else:
+                words[interesting_word]  = {'count': tuples[1], 'file': [os.path.basename(filename)]}
 
+    
     pprint.pprint(sorted(words.items(), key=lambda x: (words[interesting_word]['count'])))
 
 
 if __name__ == "__main__":
-    main()
+    read_files()
 
-# isolate sentences, which would end with , . ; : ' " ] ) "
+def main():
+    pass
